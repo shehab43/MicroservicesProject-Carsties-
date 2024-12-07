@@ -5,9 +5,24 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgrespw  # Corrected environment variable
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data  # Correct volume path
 
+  mongodb:
+    image: mongo
+    environment:
+     - MONGO_INITDB_ROOT_USERNAME=root
+     - MONGO_INITDB_ROOT_PASSWORD=mongopw
+
+      
+
+    ports:
+     - 27017:27017
+    volumes:
+      - mongodata:/data/db
+
+
 volumes:
   pgdata: {}
+  mongodata: {}

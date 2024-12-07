@@ -56,5 +56,36 @@ namespace AuctionService.Controllers
             return CreatedAtAction(nameof(GetAuctionById)
                 ,new { Auction.Id}, _mapper.Map<AuctionDto>(Auction));
         }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateAuction(Guid Id,UpdateAuctionDto updateAuctionDto)
+        {
+            var Auction = await _context.Auctions.Include(x => x.Item).FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (Auction == null) return NotFound();
+
+            Auction.Item.Make = updateAuctionDto.Make ?? Auction.Item.Make;
+            Auction.Item.Model = updateAuctionDto.Model ?? Auction.Item.Model;
+            Auction.Item.Color = updateAuctionDto.Color ?? Auction.Item.Color;
+            Auction.Item.Mileage = updateAuctionDto.Mileage ?? Auction.Item.Mileage;
+            Auction.Item.Year = updateAuctionDto.Year ?? Auction.Item.Year;
+
+            var result =  await _context.SaveChangesAsync() > 0;
+            if (result) return Ok();
+
+            return BadRequest("Problem Save Changes");
+            
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeletAuction(Guid Id)
+        {
+            var auction = await _context.Auctions.FindAsync(Id);
+            if (auction == null) return NotFound();
+
+            _context.Auctions.Remove(auction);
+            var result = await _context.SaveChangesAsync() > 0;
+            if (!result) return BadRequest("could not Update db");
+            return Ok();
+
+        }
     }
 }

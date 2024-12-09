@@ -3,12 +3,11 @@ services:
   postgres:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD=postgrespw  # Corrected environment variable
+      - POSTGRES_PASSWORD=postgrespw  
     ports:
       - 5432:5432
     volumes:
-      - pgdata:/var/lib/postgresql/data  # Correct volume path
-
+      - pgdata:/var/lib/postgresql/data 
   mongodb:
     image: mongo
     environment:

@@ -22,7 +22,7 @@ namespace SearchService.Service
                 .Project(x => x.UpdatedAt.ToString())
                 .ExecuteFirstAsync();
 
-            return await _httpClient.GetFromJsonAsync<List<Item>>(_cofig["AuctionServiceUrl"]+"/api/Auction?date=" +LAstUpdated);
+            return await _httpClient.GetFromJsonAsync<List<Item>>(_cofig["AuctionServiceUrl"]+"/api/Auctions?date=" +LAstUpdated);
         }
     }
 }

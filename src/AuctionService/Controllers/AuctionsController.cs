@@ -27,7 +27,7 @@ namespace AuctionService.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions(string? date)
+        public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions(string date)
         {
             var query = _context.Auctions.OrderBy(x => x.Item.Make).AsQueryable();
             if (!string.IsNullOrEmpty(date))

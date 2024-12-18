@@ -1,3 +1,4 @@
+using AuctionService.Counsumers;
 using AuctionService.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ builder.Services.AddMassTransit(x =>
         o.UsePostgres();
         o.UseBusOutbox();
     });
+    x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultCounsumer>();
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction",false));
     x.UsingRabbitMq((Context, cfg) =>
     {
         cfg.ConfigureEndpoints(Context);

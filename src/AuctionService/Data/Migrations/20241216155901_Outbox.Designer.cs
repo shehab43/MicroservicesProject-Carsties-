@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AuctionService.Data.Migrations
+namespace AuctionService.data.migrations
 {
     [DbContext(typeof(AuctionDbContext))]
-    [Migration("20241215145555_Outbox")]
+    [Migration("20241216155901_Outbox")]
     partial class Outbox
     {
         /// <inheritdoc />

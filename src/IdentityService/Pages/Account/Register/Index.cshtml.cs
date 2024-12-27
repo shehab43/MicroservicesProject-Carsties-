@@ -39,11 +39,11 @@ namespace IdentityService.Pages.Account.Register
 
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPost()
         {
             if (Input.Button != "register")
             {
-                return Redirect("~");
+                return Redirect("~/");
             }
 
             if (ModelState.IsValid)
@@ -73,10 +73,10 @@ namespace IdentityService.Pages.Account.Register
                 }
 
                 // Handle errors
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                //foreach (var error in result.Errors)
+                //{
+                //    ModelState.AddModelError(string.Empty, error.Description);
+                //}
             }
 
             return Page();

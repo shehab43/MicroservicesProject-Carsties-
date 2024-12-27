@@ -1,6 +1,7 @@
 using Duende.IdentityServer;
 using IdentityService.Data;
 using IdentityService.Models;
+using IdentityService.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -19,18 +20,18 @@ internal static class HostingExtensions
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAllOrigins",
-                builder =>
-                {
-                    builder
-                        .AllowAnyOrigin()
-                        .SetIsOriginAllowedToAllowWildcardSubdomains()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-        });
+        ////builder.Services.AddCors(options =>
+        ////{
+        ////    options.AddPolicy("AllowAllOrigins",
+        ////        builder =>
+        ////        {
+        ////            builder
+        ////                .AllowAnyOrigin()
+        ////                .SetIsOriginAllowedToAllowWildcardSubdomains()
+        ////                .AllowAnyHeader()
+        ////                .AllowAnyMethod();
+        ////        });
+        ////});
 
         builder.Services
             .AddIdentityServer(options =>
@@ -43,11 +44,12 @@ internal static class HostingExtensions
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 // options.EmitStaticAudienceClaim = true;
             })
-    
+
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
-            .AddAspNetIdentity<ApplicationUser>();
+            .AddAspNetIdentity<ApplicationUser>()
+            .AddProfileService<CustomProfileService>();
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.Cookie.SameSite = SameSiteMode.Lax;

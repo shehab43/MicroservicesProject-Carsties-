@@ -9,6 +9,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,18 +54,22 @@ namespace AuctionService.Controllers
             var Auction = await _context.Auctions.
                                 Include(x => x.Item)
                                 .FirstOrDefaultAsync(x =>x.Id ==id);
+
             if (Auction == null) return NotFound();
+
             return _mapper.Map<AuctionDto>(Auction);
         }
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<CreateAuctionDto>> CreateAuction(CreateAuctionDto auctionDto)
         {
-            var Auction = _mapper.Map<Auction>(auctionDto);
+            var auction = _mapper.Map<Auction>(auctionDto);
 
-            _context.Auctions.Add(Auction);
+            auction.Seller = User.Identity.Name;
+            _context.Auctions.Add(auction);
 
 
-            var newAuction = _mapper.Map<AuctionDto>(Auction);
+            var newAuction = _mapper.Map<AuctionDto>(auction);
 
             await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
             var Result = await _context.SaveChangesAsync() > 0;
@@ -72,34 +77,42 @@ namespace AuctionService.Controllers
             if (!Result) return BadRequest("could not save changes to db");
 
             return CreatedAtAction(nameof(GetAuctionById)
-                ,new { Auction.Id}, _mapper.Map<AuctionDto>(Auction));
+                ,new { auction.Id}, _mapper.Map<AuctionDto>(auction));
         }
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAuction(Guid Id,UpdateAuctionDto updateAuctionDto)
+        public async Task<ActionResult> UpdateAuction(Guid Id, UpdateAuctionDto updateAuctionDto)
         {
-            var Auction = await _context.Auctions.Include(x => x.Item).FirstOrDefaultAsync(x => x.Id == Id);
+            var auction = await _context.Auctions.Include(x => x.Item).FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (Auction == null) return NotFound();
+            if (auction == null) return NotFound();
 
-            Auction.Item.Make = updateAuctionDto.Make ?? Auction.Item.Make;
-            Auction.Item.Model = updateAuctionDto.Model ?? Auction.Item.Model;
-            Auction.Item.Color = updateAuctionDto.Color ?? Auction.Item.Color;
-            Auction.Item.Mileage = updateAuctionDto.Mileage ?? Auction.Item.Mileage;
-            Auction.Item.Year = updateAuctionDto.Year ?? Auction.Item.Year;
+            if (auction.Seller != User.Identity.Name) return Forbid();
 
-            await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(Auction));
+            auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
+            auction.Item.Model = updateAuctionDto.Model ?? auction.Item.Model;
+            auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
+            auction.Item.Mileage = updateAuctionDto.Mileage ?? auction.Item.Mileage;
+            auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
 
-            var result =  await _context.SaveChangesAsync() > 0;
+            await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
+
+            var result = await _context.SaveChangesAsync() > 0;
+
             if (result) return Ok();
 
-            return BadRequest("Problem Save Changes");
-            
+            return BadRequest("Problem saving changes");
         }
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletAuction(Guid Id)
         {
             var auction = await _context.Auctions.FindAsync(Id);
+
             if (auction == null) return NotFound();
+
+            if (auction.Seller != User.Identity.Name) return Forbid();
 
             _context.Auctions.Remove(auction);
             await _publishEndpoint.Publish<AuctionDeleted>(new{ Id = auction.Id.ToString() });

@@ -1,4 +1,3 @@
-
 services:
   postgres:
     image: postgres
@@ -22,4 +21,62 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+  auction-svc:
+    image: shehabmohamed/auction-svc:latest
+    build: 
+      context: .
+      dockerfile: src/AuctionService/DockerFile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - RabbitMq__Host=rabbitmq
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=Auctions;User Id=postgres;Password=postgrespw
+      - IdentityServiceUrl=http://identity-svc
+    ports:
+      - 7001:80
+    depends_on:
+      - postgres
+      - rabbitmq
 
+
+  search-svc:
+    image: shehabmohamed/search-svc:latest
+    build: 
+      context: .
+      dockerfile: src/SearchService/DockerFile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - RabbitMq__Host=rabbitmq
+      - ConnectionStrings__MongoDbConnection=mongodb://root:mongopw@mongodb
+      - AuctionServiceUrl=http://auction-svc
+    ports:
+      - 7002:80
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  gateway-svc:
+    image: shehabmohamed/gateway-svc:latest
+    build: 
+      context: .
+      dockerfile: src/GatwayService/DockerFile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - 6001:80
+   
+  identity-svc:
+    image: shehabmohamed/identity-svc:latest
+    build: 
+      context: .
+      dockerfile: src/IdentityService/DockerFile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=Identity;User Id=postgres;Password=postgrespw
+    ports:
+      - 5000:80
+    depends_on:
+      - postgres

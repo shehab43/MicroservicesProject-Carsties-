@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{762E5C0A-DC4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuctionService", "src\AuctionService\AuctionService.csproj", "{73E9C97A-818E-4C43-9314-74C8BC42F8F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService", "src\searchService\SearchService.csproj", "{5DCD8B5E-462B-4CBA-86B3-A4D99F73CB31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService", "src\SearchService\SearchService.csproj", "{5DCD8B5E-462B-4CBA-86B3-A4D99F73CB31}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "src\Contracts\Contracts.csproj", "{63D8C17D-F0CA-4781-9814-3B54BF5BCE23}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService", "src\IdentityService\IdentityService.csproj", "{04CB604D-1538-458A-968F-D17777E8CAC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatwayService", "src\gatwayService\GatwayService.csproj", "{84490C82-B745-4F25-B1F6-497250D98354}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatwayService", "src\GatwayService\GatwayService.csproj", "{84490C82-B745-4F25-B1F6-497250D98354}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

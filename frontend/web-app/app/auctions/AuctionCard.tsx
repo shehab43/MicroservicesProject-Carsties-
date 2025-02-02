@@ -1,17 +1,11 @@
 import React from 'react'
 import Coundowntimer from './Coundowntimer';
 import CarImage from './CarImage';
+import { Auction } from '../types/Index';
+
 
 type props = {
-    auction: {
-        id: number;
-        make: string;
-        imageUrl:string;
-        model: string;
-        year: number;
-        auctionEnd: string;
-
-    }
+  auction: Auction
 }
 export default function AuctionCard({auction}: props ) {
   return (
